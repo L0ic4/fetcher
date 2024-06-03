@@ -46,6 +46,7 @@ function App() {
       </div>
       <div className="bg-card text-card-foreground container m-auto p-12 rounded border">
         <div className=" flex flex-col gap-10">
+          <h2 className="text-xl font-bold">Request</h2>
           <div className="border p-4 rounded flex flex-row flex-nowrap gap-2">
             <select
               className="rounded border px-3 py-2 outline-none ring-indigo-300 transition duration-100 focus:ring"
@@ -121,7 +122,7 @@ function App() {
         </div>
         <div>
           <h2 className="text-xl font-bold my-8">Request History</h2>
-          <div className="border rounded p-4 overflow-x-auto overflow-y-auto max-h-96">
+          <div className="border rounded p-4">
             <ul>
               {history.map((req, index) => (
                 <li key={index} className="mb-2 p-2 rounded border">
