@@ -1,10 +1,14 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { FaRegClipboard, FaRocket } from "react-icons/fa";
+
 function App() {
-  const [headers, setHeaders] = useState("");
-  const [body, setBody] = useState("");
+  const [headers, setHeaders] = useState(
+    '{"Authorization": "Bearer YOUR_TOKEN_HERE"}'
+  );
+  const [body, setBody] = useState('{"test": "test"}');
   const [response, setResponse] = useState(null);
-  const [url, setUrl] = useState("");
+  const [url, setUrl] = useState("https://exemple.com");
   const [method, setMethod] = useState("GET");
 
   const sendRequest = async () => {
@@ -22,11 +26,24 @@ function App() {
     }
   };
 
+  const resetFields = () => {
+    setHeaders('{"Authorization": "Bearer YOUR_TOKEN_HERE"}');
+    setBody('{"test": "test"}');
+    setResponse(null);
+    setUrl("https://exemple.com");
+    setMethod("GET");
+  };
+
   return (
     <>
-      <h1 className="text-4xl font-bold m-12 text-center">Fetcher</h1>
+      <div className="flex justify-center items-center m-12">
+        <div className="text-4xl font-bold flex-row inline-flex text-center gap-4">
+          <h1>Fetcher</h1>
+          <FaRocket />
+        </div>
+      </div>
       <div className="bg-card text-card-foreground container m-auto p-12 rounded border">
-        <div className="flex flex-col gap-10">
+        <div className=" flex flex-col gap-10">
           <div className="border p-4 rounded flex flex-row flex-nowrap gap-2">
             <select
               className="rounded border px-3 py-2 outline-none ring-indigo-300 transition duration-100 focus:ring"
@@ -59,9 +76,14 @@ function App() {
             >
               Send
             </button>
+            <button
+              className="bg-secondary rounded text-foreground px-8"
+              onClick={resetFields}
+            >
+              Reset
+            </button>
           </div>
           <div className="rounded border p-3 flex flex-row flex-nowrap gap-6">
-            {" "}
             <textarea
               className="flex-1 rounded border px-3 py-2 outline-none ring-indigo-300 transition duration-100 focus:ring"
               placeholder="Headers (JSON)"
@@ -77,7 +99,18 @@ function App() {
           </div>
         </div>
         <div>
-          <h2 className="text-xl font-bold my-8">Response</h2>
+          <div className="flex flex-row flex-nowrap justify-between">
+            <h2 className="text-xl font-bold my-8">Response</h2>
+            <button
+              className="bg-primary rounded text-foreground px-4 py-2 mt-2 flex items-center"
+              onClick={() =>
+                navigator.clipboard.writeText(JSON.stringify(response, null, 2))
+              }
+            >
+              <FaRegClipboard />
+              Copy to Clipboard
+            </button>
+          </div>
           <div className="border rounded p-4 overflow-x-auto overflow-y-auto max-h-96">
             <pre className="text-sm w-full ">
               {JSON.stringify(response, null, 2)}
