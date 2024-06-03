@@ -24,8 +24,8 @@ function App() {
   };
 
   return (
-    <div>
-      <h1>Postman Clone</h1>
+    <div className="">
+      <h1>Fetcher</h1>
       <div>
         <input
           type="text"
