@@ -11,6 +11,7 @@ function App() {
   const [url, setUrl] = useState("https://exemple.com");
   const [method, setMethod] = useState("GET");
   const [history, setHistory] = useState([]);
+  const [typeDeclaration, setTypeDeclaration] = useState("");
 
   const sendRequest = async () => {
     try {
@@ -23,17 +24,40 @@ function App() {
       const res = await axios(config);
       setResponse(res.data);
       setHistory([...history, { method, url, status: res.status }]);
+
+      if (Array.isArray(res.data) && res.data.length > 0) {
+        const typeDecl = generateTypeDeclaration(res.data[0]);
+        setTypeDeclaration(typeDecl);
+      } else if (typeof res.data === "object" && res.data !== null) {
+        const typeDecl = generateTypeDeclaration(res.data);
+        setTypeDeclaration(typeDecl);
+      }
     } catch (error) {
       setResponse(error.message);
       setHistory([...history, { method, url, status: error.message }]);
     }
   };
+
   const resetFields = () => {
     setHeaders('{"Authorization": "Bearer YOUR_TOKEN_HERE"}');
     setBody('{"test": "test"}');
     setResponse(null);
     setUrl("https://exemple.com");
     setMethod("GET");
+    setTypeDeclaration("");
+  };
+
+  const generateTypeDeclaration = (obj) => {
+    let interfaceName = "GeneratedInterface"; // Nom par défaut de l'interface
+    let typeDeclaration = `export interface ${interfaceName} {\n`;
+
+    for (const [key, value] of Object.entries(obj)) {
+      typeDeclaration += `    ${key}: ${typeof value};\n`;
+    }
+
+    typeDeclaration += `}`;
+
+    return typeDeclaration;
   };
 
   return (
@@ -120,18 +144,35 @@ function App() {
             </pre>
           </div>
         </div>
-        <div>
-          <h2 className="text-xl font-bold my-8">Request History</h2>
-          <div className="border rounded p-4 overflow-x-auto overflow-y-auto max-h-80">
-            <ul>
-              {history.map((req, index) => (
-                <li key={index} className="mb-2 p-2 rounded border">
-                  <span className="text-sm w-full">
-                    {req.method} - {req.url} - {req.status}
-                  </span>
-                </li>
-              ))}
-            </ul>
+        <div className="flex flex-row flex-wrap gap-6">
+          <div className="flex flex-col">
+            <h2 className="text-xl font-bold my-8">
+              Generated Type Declaration
+            </h2>
+            <div className="border rounded p-4 overflow-x-auto overflow-y-auto max-h-80">
+              <pre className="text-sm w-full ">{typeDeclaration}</pre>
+            </div>
+            <button
+              className="bg-primary rounded text-foreground px-4 py-2 mt-2 flex items-center"
+              onClick={() => navigator.clipboard.writeText(typeDeclaration)}
+            >
+              <FaRegClipboard />
+              Copy to Clipboard
+            </button>
+          </div>
+          <div className="flex flex-col flex-1">
+            <h2 className="text-xl font-bold my-8">Request History</h2>
+            <div className="border rounded p-4 overflow-x-auto overflow-y-auto max-h-80">
+              <ul>
+                {history.map((req, index) => (
+                  <li key={index} className="mb-2 p-2 rounded border">
+                    <span className="text-sm w-full">
+                      {req.method} - {req.url} - {req.status}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
       </div>
