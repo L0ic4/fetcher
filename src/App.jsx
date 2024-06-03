@@ -10,6 +10,7 @@ function App() {
   const [response, setResponse] = useState(null);
   const [url, setUrl] = useState("https://exemple.com");
   const [method, setMethod] = useState("GET");
+  const [history, setHistory] = useState([]);
 
   const sendRequest = async () => {
     try {
@@ -21,11 +22,12 @@ function App() {
       };
       const res = await axios(config);
       setResponse(res.data);
+      setHistory([...history, { method, url }]);
     } catch (error) {
       setResponse(error.message);
+      setHistory([...history, { method, url }]);
     }
   };
-
   const resetFields = () => {
     setHeaders('{"Authorization": "Bearer YOUR_TOKEN_HERE"}');
     setBody('{"test": "test"}');
@@ -50,7 +52,7 @@ function App() {
               value={method}
               onChange={(e) => setMethod(e.target.value)}
             >
-              <option value="GET" className="bg-green-500">
+              <option value="GET" className="bg-green-100 rounded outline-none">
                 GET
               </option>
               <option value="POST" className="bg-blue-500">
@@ -115,6 +117,20 @@ function App() {
             <pre className="text-sm w-full ">
               {JSON.stringify(response, null, 2)}
             </pre>
+          </div>
+        </div>
+        <div>
+          <h2 className="text-xl font-bold my-8">Request History</h2>
+          <div className="border rounded p-4 overflow-x-auto overflow-y-auto max-h-96">
+            <ul>
+              {history.map((req, index) => (
+                <li key={index} className="mb-2 p-2 rounded border">
+                  <span className="text-sm w-full">
+                    {req.method} - {req.url}
+                  </span>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </div>
