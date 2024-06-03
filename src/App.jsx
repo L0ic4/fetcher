@@ -66,7 +66,7 @@ function App() {
           <h2 className="text-xl font-bold">Request</h2>
           <div className="border p-4 rounded flex flex-row flex-nowrap gap-2">
             <select
-              className="rounded border px-3 py-2 outline-none ring-indigo-300 transition duration-100 focus:ring"
+              className="bg-background rounded border px-3 py-2 outline-none ring-indigo-300 transition duration-100 focus:ring"
               value={method}
               onChange={(e) => setMethod(e.target.value)}
             >
@@ -84,7 +84,7 @@ function App() {
               </option>
             </select>
             <input
-              className="flex-1 rounded border px-3 py-2 outline-none ring-indigo-300 transition duration-100 focus:ring"
+              className="bg-background flex-1 rounded border px-3 py-2 outline-none ring-indigo-300 transition duration-100 focus:ring"
               type="text"
               placeholder="URL"
               value={url}
@@ -92,7 +92,7 @@ function App() {
             />
             <button
               type="submit"
-              className="bg-primary rounded text-foreground px-8"
+              className="bg-primary text-background rounded px-8"
               onClick={sendRequest}
               disabled={isLoading}
             >
@@ -107,13 +107,13 @@ function App() {
           </div>
           <div className="rounded border p-3 flex flex-row flex-nowrap gap-6">
             <textarea
-              className="flex-1 rounded border px-3 py-2 outline-none ring-indigo-300 transition duration-100 focus:ring"
+              className="bg-background flex-1 rounded border px-3 py-2 outline-none ring-indigo-300 transition duration-100 focus:ring"
               placeholder="Headers (JSON)"
               value={headers}
               onChange={(e) => setHeaders(e.target.value)}
             />
             <textarea
-              className=" flex-1 rounded border px-3 py-2 outline-none ring-indigo-300 transition duration-100 focus:ring"
+              className="bg-background flex-1 rounded border px-3 py-2 outline-none ring-indigo-300 transition duration-100 focus:ring"
               placeholder="Body (JSON)"
               value={body}
               onChange={(e) => setBody(e.target.value)}
@@ -123,15 +123,18 @@ function App() {
         <div>
           <div className="flex flex-row flex-nowrap justify-between">
             <h2 className="text-xl font-bold my-8">Response</h2>
-            <button
-              className="bg-primary rounded text-foreground px-4 py-2 mt-2 flex items-center"
-              onClick={() =>
-                navigator.clipboard.writeText(JSON.stringify(response, null, 2))
-              }
-            >
-              <FaRegClipboard />
-              Copy to Clipboard
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                className="bg-primary rounded text-background px-4 py-2"
+                onClick={() =>
+                  navigator.clipboard.writeText(
+                    JSON.stringify(response, null, 2)
+                  )
+                }
+              >
+                <FaRegClipboard />
+              </button>
+            </div>
           </div>
           <div className="border rounded p-4 overflow-x-auto overflow-y-auto max-h-[12rem]">
             <pre className="text-sm w-full ">
@@ -147,13 +150,15 @@ function App() {
             <div className="border rounded p-4 overflow-x-auto overflow-y-auto max-h-80">
               <pre className="text-sm w-full ">{typeDeclaration}</pre>
             </div>
-            <button
-              className="bg-primary rounded text-foreground px-4 py-2 mt-2 flex items-center"
-              onClick={() => navigator.clipboard.writeText(typeDeclaration)}
-            >
-              <FaRegClipboard />
-              Copy to Clipboard
-            </button>
+            <div>
+              {" "}
+              <button
+                className="bg-primary rounded text-background px-4 py-2 mt-2 flex items-center"
+                onClick={() => navigator.clipboard.writeText(typeDeclaration)}
+              >
+                <FaRegClipboard />
+              </button>
+            </div>
           </div>
           <div className="flex flex-col flex-1">
             <h2 className="text-xl font-bold my-8">Request History</h2>
