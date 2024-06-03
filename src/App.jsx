@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { FaRegClipboard, FaRocket } from "react-icons/fa";
 import { generateTypeDeclaration } from "../utils/utils";
+import { Footer } from "./components/Footer";
 
 //TODO : code refactoring
 function App() {
@@ -176,6 +177,7 @@ function App() {
           </div>
         </div>
       </div>
+      <Footer />
     </>
   );
 }
