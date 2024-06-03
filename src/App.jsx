@@ -98,6 +98,7 @@ function App() {
               onChange={(e) => setUrl(e.target.value)}
             />
             <button
+              type="submit"
               className="bg-primary rounded text-foreground px-8"
               onClick={sendRequest}
             >
@@ -138,7 +139,7 @@ function App() {
               Copy to Clipboard
             </button>
           </div>
-          <div className="border rounded p-4 overflow-x-auto overflow-y-auto max-h-96">
+          <div className="border rounded p-4 overflow-x-auto overflow-y-auto max-h-[12rem]">
             <pre className="text-sm w-full ">
               {JSON.stringify(response, null, 2)}
             </pre>
