@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { FaRegClipboard, FaRocket } from "react-icons/fa";
+import { generateTypeDeclaration } from "../utils/utils";
 
+//TODO : code refactoring
 function App() {
   const [headers, setHeaders] = useState(
     '{"Authorization": "Bearer YOUR_TOKEN_HERE"}'
@@ -12,8 +14,10 @@ function App() {
   const [method, setMethod] = useState("GET");
   const [history, setHistory] = useState([]);
   const [typeDeclaration, setTypeDeclaration] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const sendRequest = async () => {
+    setIsLoading(true);
     try {
       const config = {
         method,
@@ -35,6 +39,8 @@ function App() {
     } catch (error) {
       setResponse(error.message);
       setHistory([...history, { method, url, status: error.message }]);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -45,19 +51,6 @@ function App() {
     setUrl("https://exemple.com");
     setMethod("GET");
     setTypeDeclaration("");
-  };
-
-  const generateTypeDeclaration = (obj) => {
-    let interfaceName = "GeneratedInterface"; // Nom par défaut de l'interface
-    let typeDeclaration = `export interface ${interfaceName} {\n`;
-
-    for (const [key, value] of Object.entries(obj)) {
-      typeDeclaration += `    ${key}: ${typeof value};\n`;
-    }
-
-    typeDeclaration += `}`;
-
-    return typeDeclaration;
   };
 
   return (
@@ -101,8 +94,9 @@ function App() {
               type="submit"
               className="bg-primary rounded text-foreground px-8"
               onClick={sendRequest}
+              disabled={isLoading}
             >
-              Send
+              {isLoading ? "Loading..." : "Send"}
             </button>
             <button
               className="bg-secondary rounded text-foreground px-8"
