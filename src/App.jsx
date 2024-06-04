@@ -1,18 +1,25 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { FaRegClipboard, FaRocket } from "react-icons/fa";
+import { FaRocket } from "react-icons/fa";
 import { generateTypeDeclaration } from "../utils/utils";
 import { Footer } from "./components/Footer";
+import { TypeDeclaration } from "./components/TypeDeclaration";
+import { Response } from "./components/Response";
+import { History } from "./components/History";
+import { TextArea } from "./components/TextArea";
+import { UrlInput } from "./components/UrlInput";
 
-//TODO : code refactoring
+const initialHeaders = '{"Authorization": "Bearer YOUR_TOKEN_HERE"}';
+const initialBody = '{"test": "test"}';
+const initialUrl = "https://exemple.com";
+const initialMethod = "GET";
+
 function App() {
-  const [headers, setHeaders] = useState(
-    '{"Authorization": "Bearer YOUR_TOKEN_HERE"}'
-  );
-  const [body, setBody] = useState('{"test": "test"}');
+  const [headers, setHeaders] = useState(initialHeaders);
+  const [body, setBody] = useState(initialBody);
   const [response, setResponse] = useState(null);
-  const [url, setUrl] = useState("https://exemple.com");
-  const [method, setMethod] = useState("GET");
+  const [url, setUrl] = useState(initialUrl);
+  const [method, setMethod] = useState(initialMethod);
   const [history, setHistory] = useState([]);
   const [typeDeclaration, setTypeDeclaration] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -29,14 +36,7 @@ function App() {
       const res = await axios(config);
       setResponse(res.data);
       setHistory([...history, { method, url, status: res.status }]);
-
-      if (Array.isArray(res.data) && res.data.length > 0) {
-        const typeDecl = generateTypeDeclaration(res.data[0]);
-        setTypeDeclaration(typeDecl);
-      } else if (typeof res.data === "object" && res.data !== null) {
-        const typeDecl = generateTypeDeclaration(res.data);
-        setTypeDeclaration(typeDecl);
-      }
+      updateTypeDeclaration(res.data);
     } catch (error) {
       setResponse(error.message);
       setHistory([...history, { method, url, status: error.message }]);
@@ -45,12 +45,20 @@ function App() {
     }
   };
 
+  const updateTypeDeclaration = (data) => {
+    if (Array.isArray(data) && data.length > 0) {
+      setTypeDeclaration(generateTypeDeclaration(data[0]));
+    } else if (typeof data === "object" && data !== null) {
+      setTypeDeclaration(generateTypeDeclaration(data));
+    }
+  };
+
   const resetFields = () => {
-    setHeaders('{"Authorization": "Bearer YOUR_TOKEN_HERE"}');
-    setBody('{"test": "test"}');
+    setHeaders(initialHeaders);
+    setBody(initialBody);
     setResponse(null);
-    setUrl("https://exemple.com");
-    setMethod("GET");
+    setUrl(initialUrl);
+    setMethod(initialMethod);
     setTypeDeclaration("");
   };
 
@@ -63,7 +71,7 @@ function App() {
         </div>
       </div>
       <div className="bg-card text-card-foreground container m-auto p-12 rounded border">
-        <div className=" flex flex-col gap-10">
+        <div className="flex flex-col gap-10">
           <h2 className="text-xl font-bold">Request</h2>
           <div className="border p-4 rounded flex flex-row flex-nowrap gap-2">
             <select
@@ -84,15 +92,9 @@ function App() {
                 DELETE
               </option>
             </select>
-            <input
-              className="bg-background flex-1 rounded border px-3 py-2 outline-none ring-indigo-300 transition duration-100 focus:ring"
-              type="text"
-              placeholder="URL"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-            />
+
+            <UrlInput url={url} setUrl={setUrl} />
             <button
-              type="submit"
               className="bg-primary text-background rounded px-8"
               onClick={sendRequest}
               disabled={isLoading}
@@ -107,13 +109,13 @@ function App() {
             </button>
           </div>
           <div className="rounded border p-3 flex flex-row flex-nowrap gap-6">
-            <textarea
+            <TextArea
               className="bg-background flex-1 rounded border px-3 py-2 outline-none ring-indigo-300 transition duration-100 focus:ring"
               placeholder="Headers (JSON)"
               value={headers}
               onChange={(e) => setHeaders(e.target.value)}
             />
-            <textarea
+            <TextArea
               className="bg-background flex-1 rounded border px-3 py-2 outline-none ring-indigo-300 transition duration-100 focus:ring"
               placeholder="Body (JSON)"
               value={body}
@@ -121,60 +123,10 @@ function App() {
             />
           </div>
         </div>
-        <div>
-          <div className="flex flex-row flex-nowrap justify-between">
-            <h2 className="text-xl font-bold my-8">Response</h2>
-            <div className="flex items-center gap-2">
-              <button
-                className="bg-primary rounded text-background px-4 py-2"
-                onClick={() =>
-                  navigator.clipboard.writeText(
-                    JSON.stringify(response, null, 2)
-                  )
-                }
-              >
-                <FaRegClipboard />
-              </button>
-            </div>
-          </div>
-          <div className="border rounded p-4 overflow-x-auto overflow-y-auto max-h-[12rem]">
-            <pre className="text-sm w-full ">
-              {JSON.stringify(response, null, 2)}
-            </pre>
-          </div>
-        </div>
+        <Response response={response} />
         <div className="flex flex-row flex-wrap gap-6">
-          <div className="flex flex-col">
-            <h2 className="text-xl font-bold my-8">
-              Generated Type Declaration
-            </h2>
-            <div className="border rounded p-4 overflow-x-auto overflow-y-auto max-h-80">
-              <pre className="text-sm w-full ">{typeDeclaration}</pre>
-            </div>
-            <div>
-              {" "}
-              <button
-                className="bg-primary rounded text-background px-4 py-2 mt-2 flex items-center"
-                onClick={() => navigator.clipboard.writeText(typeDeclaration)}
-              >
-                <FaRegClipboard />
-              </button>
-            </div>
-          </div>
-          <div className="flex flex-col flex-1">
-            <h2 className="text-xl font-bold my-8">Request History</h2>
-            <div className="border rounded p-4 overflow-x-auto overflow-y-auto max-h-80">
-              <ul>
-                {history.map((req, index) => (
-                  <li key={index} className="mb-2 p-2 rounded border">
-                    <span className="text-sm w-full">
-                      {req.method} - {req.url} - {req.status}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
+          <TypeDeclaration typeDeclaration={typeDeclaration} />
+          <History history={history} />
         </div>
       </div>
       <Footer />
