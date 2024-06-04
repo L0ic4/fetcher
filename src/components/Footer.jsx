@@ -1,6 +1,7 @@
 import React from "react";
 
 export const Footer = () => {
+  const currentYear = new Date().getFullYear();
   return (
     <div className="mt-16 pt-4 sm:pt-10 lg:pt-12">
       <footer className="mx-auto px-4 md:px-8">
@@ -33,7 +34,7 @@ export const Footer = () => {
             </a>
 
             <a
-              href="https://www.linkedin.com/loica-dev"
+              href="https://www.linkedin.com/in/loica-dev/"
               target="_blank"
               className="text-gray-400 transition duration-100 hover:active:text-gray-600"
             >
@@ -69,7 +70,7 @@ export const Footer = () => {
         </div>
 
         <div className="py-8 text-center text-sm text-gray-400">
-          © 2021 - Present Loica. All rights reserved.
+          © {currentYear} - Present Loica. All rights reserved.
         </div>
       </footer>
     </div>
