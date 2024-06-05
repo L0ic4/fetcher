@@ -1,8 +1,57 @@
-# React + Vite
+# Fetcher 🚀
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Fetcher is a React-based application built with Vite, designed to make HTTP requests and display responses. It includes features like request history, type declaration generation, and more.
 
-Currently, two official plugins are available:
+## Tech Stack 🛠️
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **React**: UI Library
+- **Vite**: Build Tool
+- **Axios**: HTTP Client
+- **Tailwind CSS**: Utility-First CSS Framework
+- **ESLint**: Linting Tool
+- **PostCSS**: CSS Transformations
+
+## Features ✨
+
+- **Send HTTP Requests**: Supports GET, POST, PUT, DELETE methods.
+- **Request History**: Keeps track of past requests.
+- **Type Declaration**: Generates TypeScript interfaces from responses.
+- **Clipboard Copy**: Easily copy responses and type declarations.
+
+## Getting Started 🚀
+
+1. **Clone the repository**:
+
+```bash
+git clone https://github.com/your-username/fetcher.git
+cd fetcher
+```
+
+2. **Install dependencies**:
+
+```bash
+npm install
+```
+
+3. **Run the development server**:
+
+```bash
+npm run dev
+```
+
+4. **Build for production**:
+
+```bash
+npm run build
+```
+
+## Contributing 🤝
+
+Found a bug or have a feature request? Feel free to open an issue or submit a pull request. Contributions are welcome!
+
+## License 📄
+
+This project is licensed under the MIT License.
+
+---
+
