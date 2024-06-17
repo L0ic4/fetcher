@@ -54,4 +54,3 @@ Found a bug or have a feature request? Feel free to open an issue or submit a pu
 This project is licensed under the MIT License.
 
 ---
-
