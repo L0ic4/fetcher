@@ -10,6 +10,13 @@ on:
       - "**/*.md"
       - "docs/**"
   workflow_dispatch:
+    # Le routeur (ops/ci-router.py) s'en sert pour rejouer ici un run que GitHub
+    # n'a jamais démarré : gh workflow run ... -f runner=self-hosted
+    inputs:
+      runner:
+        description: "label du runner (vide = variable CI_RUNNER)"
+        required: false
+        type: string
 
 # One deploy at a time per repository: a second push waits instead of racing the
 # first one over the same remote directory.
@@ -26,7 +33,7 @@ jobs:
     # Le runner est choisi par variable de dépôt : `CI_RUNNER=self-hosted` sur le
     # runner du VPS, `CI_RUNNER=ubuntu-latest` pour revenir au runner GitHub.
     # Variable absente = self-hosted (les minutes des dépôts privés sont épuisées).
-    runs-on: ${{ vars.CI_RUNNER || 'self-hosted' }}
+    runs-on: ${{ inputs.runner || vars.CI_RUNNER || 'self-hosted' }}
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
