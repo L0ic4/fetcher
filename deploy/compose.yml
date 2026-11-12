@@ -1,0 +1,37 @@
+name: fetcher
+
+# One static SPA, one container, no published port: the public edge
+# (hunter-rgb-site) reaches it by name over the shared `edge` network.
+
+services:
+  fetcher:
+    build: .
+    container_name: fetcher
+    restart: unless-stopped
+    networks:
+      - edge
+    read_only: true
+    tmpfs:
+      - /var/cache/nginx
+      - /tmp
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 64
+    mem_limit: 64m
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:8080/healthz"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "2"
+
+networks:
+  edge:
+    external: true
+    name: edge

@@ -1,0 +1,59 @@
+name: Deploy
+
+# Build here, ship there. The VPS never runs a toolchain: it receives files and
+# rebuilds a container. Verification is part of the deploy — a run is only green
+# if the public URL answers 200 afterwards.
+on:
+  push:
+    branches: ["main"]
+    paths-ignore:
+      - "**/*.md"
+      - "docs/**"
+  workflow_dispatch:
+
+# One deploy at a time per repository: a second push waits instead of racing the
+# first one over the same remote directory.
+concurrency:
+  group: deploy-${{ github.repository }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Ship to the VPS
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Wire the deploy key
+        env:
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+        run: |
+          set -eu
+          test -n "$VPS_SSH_KEY" || { echo "secret VPS_SSH_KEY is missing"; exit 1; }
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$VPS_SSH_KEY" > ~/.ssh/id_deploy
+          chmod 600 ~/.ssh/id_deploy
+          ssh-keyscan -p "${{ vars.VPS_PORT }}" -H "${{ vars.VPS_HOST }}" >> ~/.ssh/known_hosts 2>/dev/null
+          {
+            echo "Host vps"
+            echo "  HostName ${{ vars.VPS_HOST }}"
+            echo "  Port ${{ vars.VPS_PORT }}"
+            echo "  User ${{ vars.VPS_USER }}"
+            echo "  IdentityFile ~/.ssh/id_deploy"
+            echo "  IdentitiesOnly yes"
+          } >> ~/.ssh/config
+          ssh vps 'echo "connected to $(hostname)"'
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund || npm install --no-audit --no-fund
+
+      - name: Build, ship, verify
+        run: sh ./deploy.sh
