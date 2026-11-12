@@ -14,7 +14,11 @@ remote=${VPS_DIR:-/home/loica/VPS-CONTROL/apps/fetcher}
 url=${SITE_URL:-https://fetcher.161.97.69.138.sslip.io}
 
 echo "==> dependencies"
-(cd "$here" && npm ci --no-audit --no-fund || npm install --no-audit --no-fund)
+# `npm ci` keeps the lockfile's platform-specific entries, and a lockfile written
+# elsewhere leaves rollup without its native binary ("Cannot find module
+# '@rollup/rollup-linux-x64-gnu'"). A fresh install resolves the right one.
+rm -rf "$here/node_modules"
+(cd "$here" && npm install --no-audit --no-fund)
 
 echo "==> build"
 (cd "$here" && npm run build)
