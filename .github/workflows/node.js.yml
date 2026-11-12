@@ -1,10 +1,11 @@
 name: Node.js CI
 
+# Déclenchement manuel uniquement. Reste du gabarit Vite : il lance le formatage
+# puis commite le résultat sur main. Avec deploy.yml (déploiement à chaque push
+# sur main), ce commit automatique relancerait un déploiement en boucle, et le
+# volet build/test est commenté. Le build et les tests vivent dans deploy.sh.
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+  workflow_dispatch:
     
 permissions:
   contents: write
