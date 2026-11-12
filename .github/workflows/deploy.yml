@@ -23,7 +23,10 @@ permissions:
 jobs:
   deploy:
     name: Ship to the VPS
-    runs-on: ubuntu-latest
+    # Le runner est choisi par variable de dépôt : `CI_RUNNER=self-hosted` sur le
+    # runner du VPS, `CI_RUNNER=ubuntu-latest` pour revenir au runner GitHub.
+    # Variable absente = self-hosted (les minutes des dépôts privés sont épuisées).
+    runs-on: ${{ vars.CI_RUNNER || 'self-hosted' }}
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
